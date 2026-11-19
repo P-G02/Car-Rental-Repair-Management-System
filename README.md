@@ -1,104 +1,295 @@
-# Car Rental & Repair Management System (Java OOP Mini Project)
+# 🚗 Car Rental & Repair Management System
 
-**Simple frontend:** `index.html` + `style.css` (JavaScript is inside `index.html`)
+### Java OOP Mini Project
 
-**Entire Java backend:** `CarRentalRepairSystem.java` — this is the **only `.java` source file**. All classes and methods are commented with `CONCEPT` labels for an easy practical demonstration.
+A Java-based web application designed to simplify car rental operations and vehicle repair management through an integrated platform.
 
-## Run on Windows (easy)
+The project demonstrates the practical implementation of **Object-Oriented Programming, JDBC, HSQLDB, REST APIs, Multithreading, Exception Handling and File Handling**.
 
-1. Install **Java JDK 17 or newer**. Test in PowerShell: `java -version` and `javac -version`.
-2. Extract **the entire ZIP**, including its `lib` folder, into one folder.
-3. Double-click **`run.bat`**, or open PowerShell in the project folder and run `.\run.bat`.
-4. Open **http://localhost:8080** in your browser.
-5. Add a customer or use the demo customer; add cars or use the 3 demo cars. Try renting, returning, scheduling a repair, and completing a repair.
-6. Press **Ctrl+C** inside the terminal window to stop the server and save the database.
+---
 
-You do **not** need MySQL, Maven, npm, Python, or internet access. The JDBC driver (`lib/hsqldb-1.8.0.10.jar`) is included.
+## 📌 Project Overview
 
-## Run on Linux / macOS
+The Car Rental & Repair Management System provides a centralized platform to manage vehicles, customers, rental bookings and repair operations.
 
-```sh
+It allows users to manage vehicle availability, calculate rental charges, process vehicle returns and track repair activities through a simple web interface.
+
+**Main Objective:** To apply Core Java and Object-Oriented Programming concepts to develop a practical, database-driven management application.
+
+---
+
+## ✨ Key Features
+
+### 🚘 1. Car Management
+- Add new vehicles with registration number, brand, model and rental price.
+- View vehicle records.
+- Monitor vehicle availability.
+- Track available, rented and under-repair vehicles.
+
+### 👥 2. Customer Management
+- Register new customers.
+- Store customer details.
+- View registered customer records.
+
+### 📅 3. Rental Management
+- Book available vehicles for customers.
+- Specify rental duration.
+- Automatically calculate rental charges.
+- Return rented vehicles.
+- Automatically apply a **10% discount for rentals of 7 or more days**.
+
+### 🔧 4. Repair Management
+- Register vehicle repair requests.
+- Record problem descriptions.
+- Assign mechanic names.
+- Store repair costs.
+- Mark repair jobs as completed.
+- Automatically update vehicle availability after repair completion.
+
+### 📊 5. Dashboard
+- View overall system statistics.
+- Monitor cars, customers, rentals and repairs.
+- Get a consolidated overview of system activities.
+
+---
+
+## 🛠️ Technology Stack
+
+| Technology | Purpose |
+|---|---|
+| Java 17+ | Backend development |
+| HTML5 | Frontend structure |
+| CSS3 | User interface styling |
+| JavaScript | Frontend interactions |
+| HSQLDB | Database management |
+| JDBC | Database connectivity |
+| Java HttpServer | Local HTTP server |
+| REST API | Frontend-backend communication |
+
+---
+
+## 🧠 Core Java Concepts Implemented
+
+One of the main objectives of this project is to demonstrate Core Java concepts through practical implementation.
+
+| Concept | Implementation |
+|---|---|
+| Classes and Objects | Car, Customer, Rental, Repair, User |
+| Static Variables | Car object counter |
+| Encapsulation | Private fields and getter methods |
+| Inheritance | Single, multilevel and hierarchical inheritance |
+| Method Overloading | PriceCalculator.total() |
+| Method Overriding | getRole() and calculateBill() |
+| Abstraction | Abstract User class |
+| Interfaces | Billable and Describable |
+| Polymorphism | Common Billable interface for Rental and Repair |
+| Java Collections | ArrayList, HashMap, List and Map |
+| String Handling | trim(), length(), replace(), StringBuilder |
+| Exception Handling | try-catch and custom InputException |
+| Multithreading | ExecutorService and scheduled background tasks |
+| File Handling | Reading HTML/CSS and writing activity.log |
+| JDBC | Connection, PreparedStatement and ResultSet |
+| REST API | HTTP GET and POST requests |
+| final Keyword | Final variables and methods |
+| super Keyword | Parent constructor invocation |
+
+**Additional documentation:** Refer to `CONCEPT_GUIDE.md` for a detailed explanation of all 20 Java concepts and their locations in the source code.
+
+---
+
+## 🗄️ Database Design
+
+The application uses HSQLDB with JDBC connectivity.
+
+Four main database tables are implemented:
+
+| Table | Description |
+|---|---|
+| customers | Stores customer information |
+| cars | Stores vehicle information and availability status |
+| rentals | Stores rental bookings and transaction details |
+| repairs | Stores repair records, mechanic information and costs |
+
+### Database Workflow
+
+1. A customer books an available vehicle.
+2. A rental record is created.
+3. The vehicle status changes to RENTED.
+4. On returning the vehicle, its status changes to AVAILABLE.
+5. If a repair is registered, the vehicle status changes to REPAIR.
+6. Once the repair is completed, the vehicle becomes AVAILABLE again.
+
+The database is initialized automatically when the application runs for the first time. Records are persisted locally between executions.
+
+---
+
+## 🔗 REST API Endpoints
+
+The Java backend exposes HTTP endpoints for frontend communication.
+
+### GET Requests
+
+| Endpoint | Functionality |
+|---|---|
+| `/api/dashboard` | Retrieve dashboard statistics |
+| `/api/cars` | Retrieve all vehicles |
+| `/api/customers` | Retrieve customer records |
+| `/api/rentals` | Retrieve rental records |
+| `/api/repairs` | Retrieve repair records |
+
+### POST Requests
+
+| Endpoint | Functionality |
+|---|---|
+| `/api/customers` | Register a customer |
+| `/api/cars` | Add a vehicle |
+| `/api/rentals` | Book a vehicle |
+| `/api/rentals/return` | Return a vehicle |
+| `/api/repairs` | Register a repair |
+| `/api/repairs/complete` | Complete a repair |
+
+The frontend communicates with the Java backend using JavaScript Fetch API requests.
+
+---
+
+## 📂 Project Structure
+
+```text
+Car-Rental-Repair-Management-System/
+│
+├── CarRentalRepairSystem.java
+│
+├── index.html
+├── style.css
+│
+├── run.bat
+├── run.sh
+│
+├── README.md
+├── CONCEPT_GUIDE.md
+│
+├── lib/
+│   ├── hsqldb-1.8.0.10.jar
+│   └── THIRD_PARTY_LICENSE.txt
+│
+├── docs/
+│   └── Reference_EER_Diagram.pdf
+│
+├── data/              (Generated at runtime)
+└── activity.log       (Generated at runtime)
+```
+
+---
+
+## ⚙️ Installation & Setup
+
+### Prerequisites
+
+- Java JDK 17 or newer.
+- Git (optional, for cloning the repository).
+- A modern web browser.
+
+No separate MySQL installation, Maven, npm or Python installation is required.
+
+The HSQLDB JDBC driver is already included in the `lib` directory.
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/P-G02/Car-Rental-Repair-Management-System.git
+```
+
+### Step 2: Navigate to the Project Folder
+
+```bash
+cd Car-Rental-Repair-Management-System
+```
+
+### Step 3: Run the Application
+
+**Windows:**
+
+```powershell
+.\run.bat
+```
+
+**Linux / macOS:**
+
+```bash
+chmod +x run.sh
 ./run.sh
 ```
 
-Or compile/run manually:
+### Step 4: Open the Application
 
-**Windows PowerShell:**
-```powershell
-javac -encoding UTF-8 -cp "lib/*" CarRentalRepairSystem.java
-java -cp ".;lib/*" CarRentalRepairSystem
+Visit the following address in your browser:
+
+```text
+http://localhost:8080
 ```
 
-**macOS / Linux:**
-```sh
-javac -encoding UTF-8 -cp 'lib/*' CarRentalRepairSystem.java
-java -cp '.:lib/*' CarRentalRepairSystem
-```
+The application initializes the database and sample records automatically on its first run.
 
-If port 8080 is already being used, stop the other program or change `PORT` at the top of the Java file and the sample address in the HTML header. Open your new localhost port.
+### Step 5: Stop the Application
 
-## Features to demonstrate
+Press `Ctrl + C` in the terminal running the Java server.
 
-- **Car module:** Add vehicles; view available, rented and under-repair cars.
-- **Customer module:** Add a customer.
-- **Rental module:** Rent an available car, calculate cost, return it. **7+ days = 10% discount**.
-- **Repair module:** Assign a mechanic name and cost to an available car; complete the job.
-- **JDBC:** Save/read data in local HSQLDB tables: `customers`, `cars`, `rentals`, `repairs`.
-- **REST API:** Java HTTP server uses GET and POST; the frontend calls these APIs via `fetch`.
-- **File handling:** Writes `activity.log` and reads HTML/CSS; database files are in `data/`.
-- **Multithreading:** 4 HTTP worker threads and 1 periodic background logger thread.
+---
 
-The application creates its local database and example records automatically on first run. Your own data is saved between runs. To reset, stop the Java server, then delete the generated **`data/` folder** and `activity.log`. Restart to recreate the examples.
+## 📸 Demonstration Workflow
 
-## Source-code locations (search for the marker)
+The following workflow can be used to demonstrate the application:
 
-| Java syllabus concept | Where to show the examiner |
-|---|---|
-| Classes and objects | `class Car`, `class Customer`, `class Rental`, `new Admin(...)`, `new Car(...)` |
-| Static variable | `Car.objectsCreated` |
-| Private variables | `User` fields `private final`, `Car` fields |
-| Single inheritance | `class Customer extends User` |
-| Multilevel inheritance | `User -> Staff -> Mechanic` |
-| Hierarchical inheritance | `Staff -> Admin` and `Staff -> Mechanic` |
-| Multiple inheritance alternative | Java doesn't allow multiple class inheritance; `Rental implements Billable, Describable` demonstrates two interfaces, and `Mechanic extends Staff implements Describable` shows a hybrid-style combination |
-| Method overloading | Two `PriceCalculator.total(...)` methods, with different parameters |
-| Method overriding | `@Override getRole()` in Customer/Admin/Mechanic, `calculateBill()` in Rental/Repair |
-| Abstract method | `abstract String getRole()` in abstract `User` |
-| Interface | `interface Billable` and its Rental/Repair implementations |
-| Java Collections | `List`, `ArrayList`, `Map`, `HashMap`, `List.of()` |
-| String methods | `trim()`, `isEmpty()`, `length()`, `replace()`, `toUpperCase()`, `StringBuilder` |
-| Exception handling | `try/catch` in `handleRequest`, `InputException`, DB `rollback()` |
-| Multithreading | `WORKERS`, `BACKGROUND.scheduleAtFixedRate(...)` |
-| File handling | `FileLogger.write()`, `Files.readString()` |
-| JDBC | `Database.connect()`, `PreparedStatement`, `ResultSet`, transactions |
-| REST API | `handleApi()` GET/POST, frontend `fetch()` |
-| `final` keyword | `PORT`, `PROJECT_NAME`, `User.identity()` |
-| `super` keyword | `Customer`, `Staff`, `Mechanic` constructors |
+1. Open the dashboard and view system statistics.
+2. Add a new customer.
+3. Add a new vehicle.
+4. Book the vehicle for a customer.
+5. Demonstrate automatic rental bill calculation.
+6. Return the vehicle and verify its availability.
+7. Register a repair request.
+8. Complete the repair and verify the updated vehicle status.
+9. Inspect the activity log.
 
-Full concept guide: **`CONCEPT_GUIDE.md`**.
+---
 
-## API examples
+## 🎓 Academic Relevance
 
-| HTTP method | Endpoint | Purpose |
-|---|---|---|
-| GET | `/api/dashboard` | Live statistics |
-| GET | `/api/cars` | All cars |
-| GET | `/api/customers` | All customers |
-| GET | `/api/rentals` | Rental bookings |
-| GET | `/api/repairs` | Repair jobs |
-| POST | `/api/customers` | Create customer (`name`, `phone`) |
-| POST | `/api/cars` | Add car (`registration`, `brand`, `model`, `price`) |
-| POST | `/api/rentals` | Book car (`customerId`, `carId`, `days`) |
-| POST | `/api/rentals/return` | Return car (`rentalId`) |
-| POST | `/api/repairs` | Create job (`carId`, `problem`, `mechanic`, `cost`) |
-| POST | `/api/repairs/complete` | Close job (`repairId`) |
+This project was developed as a Core Java / Object-Oriented Programming mini project.
 
-POST requests use `application/x-www-form-urlencoded` forms. For classroom simplicity, this is a **local educational demo**: it has no login, role-based authorization, or production security hardening. Do not expose it to the public internet.
+It focuses on applying theoretical programming concepts to a practical application while demonstrating:
 
-## Relationship to your attached EER diagram
+- Object-oriented software design.
+- Database connectivity and persistence.
+- Client-server communication.
+- Concurrent request handling.
+- Exception handling and validation.
+- File operations and logging.
 
-A copy of your uploaded diagram is at `docs/Reference_EER_Diagram.pdf`. The diagram includes a **larger proposed system** with Payment, Invoice, Car Inspection, Spare Part and other detailed fields. This **small teaching demonstration deliberately implements the four central database tables only** (Customer, Car, Rental, Repair) and shows Admin/Mechanic via Java class inheritance or a repair mechanic name. It is **not** a complete implementation of every field/entity in that reference EER.
+---
 
-## JDBC driver licensing
+## ⚠️ Project Scope
 
-Included `lib/hsqldb-1.8.0.10.jar` is an HSQLDB JDBC driver. Its redistribution license and notices are in `lib/THIRD_PARTY_LICENSE.txt`.
+This is a local educational demonstration project.
+
+- It does not currently implement login or role-based authentication.
+- The implemented database focuses on four central entities: Customer, Car, Rental and Repair.
+- The accompanying reference EER diagram represents a larger proposed system and is not fully implemented.
+- The application is intended for local demonstration, not public production deployment.
+
+---
+
+## 👩‍💻 Developed As
+
+**Java OOP Mini Project**
+
+**Project:** Car Rental & Repair Management System
+
+**Primary Language:** Java
+
+**Database:** HSQLDB
+
+**Backend Connectivity:** JDBC
+
+---
+
+⭐ If you find this project interesting, feel free to explore the source code and its concept guide.
