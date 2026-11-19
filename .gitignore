@@ -1,0 +1,6 @@
+data/
+activity.log
+*.class
+*.log
+.idea/
+.vscode/

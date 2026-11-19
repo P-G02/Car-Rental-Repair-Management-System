@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Car Rental & Repair · Java Mini Project</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand"><span class="brand-mark">CR</span><div><strong>Car Rental & Repair</strong><small>Java mini-project dashboard</small></div></div>
+    <span class="server-pill"><span class="status-dot"></span> Java REST API · localhost:8080</span>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-text">
+        <span class="eyebrow">MANAGEMENT SYSTEM</span>
+        <h1>Manage your cars,<br>rentals & repairs.</h1>
+        <p>A simple frontend connected to a Java backend and a JDBC database. Add data below to see the whole workflow.</p>
+        <div class="hero-links"><a href="#operations">Create a booking ↗</a><a href="#records">View records ↓</a></div>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="car-icon">🚙</div><span>FLEET<br>CONTROL</span></div>
+    </section>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <section class="stats" aria-label="System totals">
+      <article><span>Total cars</span><strong id="statCars">–</strong><small>Registered vehicles</small></article>
+      <article><span>Available</span><strong id="statAvailable">–</strong><small>Ready to book</small></article>
+      <article><span>Active rentals</span><strong id="statRentals">–</strong><small>Cars currently out</small></article>
+      <article><span>Open repairs</span><strong id="statRepairs">–</strong><small>Work in progress</small></article>
+      <article><span>Customers</span><strong id="statCustomers">–</strong><small>Saved profiles</small></article>
+    </section>
+
+    <div id="operations" class="section-title"><div><span class="eyebrow">OPERATIONS</span><h2>Add & manage</h2></div><small>These forms call Java POST endpoints.</small></div>
+    <section class="forms-grid">
+      <article class="panel"><div class="panel-heading"><div class="badge teal">01</div><div><h3>Add customer</h3><p>Create a customer profile</p></div></div>
+        <form data-endpoint="/api/customers"><label>Customer name<input name="name" placeholder="e.g. Asha Patil" maxlength="100" required></label><label>Phone number<input name="phone" placeholder="e.g. 9876543210" maxlength="30" required></label><button type="submit">Save customer →</button></form>
+      </article>
+      <article class="panel"><div class="panel-heading"><div class="badge blue">02</div><div><h3>Add car</h3><p>Register a vehicle in the fleet</p></div></div>
+        <form data-endpoint="/api/cars"><label>Registration<input name="registration" placeholder="e.g. MH02XY0001" maxlength="40" required></label><div class="fields-2"><label>Brand<input name="brand" placeholder="Tata" maxlength="100" required></label><label>Model<input name="model" placeholder="Nexon" maxlength="100" required></label></div><label>Daily rental price (₹)<input name="price" type="number" min="0" step="0.01" placeholder="2000" required></label><button type="submit">Add vehicle →</button></form>
+      </article>
+      <article class="panel"><div class="panel-heading"><div class="badge amber">03</div><div><h3>Rent a car</h3><p>Create a rental booking</p></div></div>
+        <form data-endpoint="/api/rentals"><label>Choose customer<select name="customerId" id="rentalCustomer" required></select></label><label>Available car<select name="carId" id="rentalCar" required></select></label><label>Number of days<input name="days" type="number" min="1" max="365" value="2" required></label><p class="hint">Rent for 7+ days to get a 10% discount (method overloading demo).</p><button type="submit">Confirm rental →</button></form>
+      </article>
+      <article class="panel"><div class="panel-heading"><div class="badge purple">04</div><div><h3>Schedule repair</h3><p>Create a repair job</p></div></div>
+        <form data-endpoint="/api/repairs"><label>Available car<select name="carId" id="repairCar" required></select></label><label>Problem description<input name="problem" placeholder="e.g. Engine oil change" maxlength="100" required></label><div class="fields-2"><label>Mechanic<input name="mechanic" placeholder="e.g. Ravi" maxlength="100" required></label><label>Estimated cost (₹)<input name="cost" type="number" min="0" step="0.01" placeholder="1200" required></label></div><button type="submit">Create repair job →</button></form>
+      </article>
+    </section>
+
+    <div id="records" class="section-title record-title"><div><span class="eyebrow">JDBC DATA</span><h2>Live records</h2></div><button class="secondary" id="refreshBtn">↻ Refresh data</button></div>
+    <section class="records">
+      <article class="panel wide"><div class="table-heading"><h3>Fleet status</h3><span>Cars table</span></div><div class="table-wrap"><table><thead><tr><th>Registration</th><th>Car</th><th>Daily rate</th><th>Status</th></tr></thead><tbody id="carsBody"></tbody></table></div></article>
+      <article class="panel wide"><div class="table-heading"><h3>Rental bookings</h3><span>Rentals + Customers join</span></div><div class="table-wrap"><table><thead><tr><th>Rental #</th><th>Customer</th><th>Car</th><th>Days</th><th>Total</th><th>Status</th><th>Action</th></tr></thead><tbody id="rentalsBody"></tbody></table></div></article>
+      <article class="panel wide"><div class="table-heading"><h3>Repair jobs</h3><span>Repairs + Cars join</span></div><div class="table-wrap"><table><thead><tr><th>Job #</th><th>Car</th><th>Problem</th><th>Mechanic</th><th>Cost</th><th>Status</th><th>Action</th></tr></thead><tbody id="repairsBody"></tbody></table></div></article>
+    </section>
+    <footer>Simple Java OOP project • One Java source file • Local JDBC database • HTML + CSS frontend</footer>
+  </main>
+
+  <script>
+    // Vanilla JavaScript is embedded in this HTML: no npm, React, or extra JS file.
+    const rupees = value => '₹' + Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const safe = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const emptyRow = cols => `<tr><td class="empty" colspan="${cols}">No records yet</td></tr>`;
+    const label = text => `<span class="tag ${safe(text.toLowerCase())}">${safe(text)}</span>`;
+
+    function notify(message, isError = false) {
+      const box = document.getElementById('toast');
+      box.hidden = false;
+      box.textContent = message;
+      box.classList.toggle('error', isError);
+      window.clearTimeout(window.toastTimer);
+      window.toastTimer = window.setTimeout(() => { box.hidden = true; }, 5200);
+    }
+
+    async function getJson(url) {
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Request failed: ${url}`);
+      return response.json();
+    }
+
+    async function refresh() {
+      try {
+        const [dashboard, cars, customers, rentals, repairs] = await Promise.all([
+          getJson('/api/dashboard'), getJson('/api/cars'), getJson('/api/customers'),
+          getJson('/api/rentals'), getJson('/api/repairs')
+        ]);
+        for (const [name, value] of Object.entries({Cars: dashboard.cars, Available: dashboard.available,
+          Rentals: dashboard.activeRentals, Repairs: dashboard.openRepairs, Customers: dashboard.customers})) {
+          document.getElementById('stat' + name).textContent = value;
+        }
+        document.getElementById('carsBody').innerHTML = cars.map(c => `<tr><td><b>${safe(c.registration)}</b></td><td>${safe(c.brand)} ${safe(c.model)}</td><td>${rupees(c.rate)}</td><td>${label(c.status)}</td></tr>`).join('') || emptyRow(4);
+        document.getElementById('rentalsBody').innerHTML = rentals.map(r => `<tr><td>#${r.id}</td><td>${safe(r.customer)}</td><td>${safe(r.car)}</td><td>${r.days}</td><td>${rupees(r.total)}</td><td>${label(r.status)}</td><td>${r.status === 'ACTIVE' ? `<button class="tiny" data-action="return" data-id="${r.id}">Return car</button>` : '—'}</td></tr>`).join('') || emptyRow(7);
+        document.getElementById('repairsBody').innerHTML = repairs.map(r => `<tr><td>#${r.id}</td><td>${safe(r.car)}</td><td>${safe(r.problem)}</td><td>${safe(r.mechanic)}</td><td>${rupees(r.cost)}</td><td>${label(r.status)}</td><td>${r.status === 'OPEN' ? `<button class="tiny" data-action="complete" data-id="${r.id}">Finish job</button>` : '—'}</td></tr>`).join('') || emptyRow(7);
+
+        const available = cars.filter(c => c.status === 'AVAILABLE');
+        fillSelect('rentalCustomer', customers.map(c => ({id: c.id, text: `${c.name} (#${c.id})`})), 'Select a customer');
+        fillSelect('rentalCar', available.map(c => ({id: c.id, text: `${c.registration} • ${c.brand} ${c.model} • ${rupees(c.rate)}/day`})), 'Select a car');
+        fillSelect('repairCar', available.map(c => ({id: c.id, text: `${c.registration} • ${c.brand} ${c.model}`})), 'Select a car');
+      } catch (error) {
+        notify('Cannot reach Java server. Start run.bat, then refresh this page.', true);
+        console.error(error);
+      }
+    }
+
+    function fillSelect(elementId, items, placeholder) {
+      const select = document.getElementById(elementId), previous = select.value;
+      select.innerHTML = `<option value="">${safe(placeholder)}</option>` +
+        items.map(item => `<option value="${item.id}">${safe(item.text)}</option>`).join('');
+      if (items.some(item => String(item.id) === previous)) select.value = previous;
+    }
+
+    async function post(url, fields) {
+      const response = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: new URLSearchParams(fields) });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Request failed');
+      notify(data.message || 'Saved successfully');
+      await refresh();
+    }
+
+    document.querySelectorAll('form[data-endpoint]').forEach(form => {
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        const button = form.querySelector('button[type="submit"]');
+        button.disabled = true;
+        try {
+          await post(form.dataset.endpoint, new FormData(form));
+          form.reset();
+        } catch (error) { notify(error.message, true); }
+        finally { button.disabled = false; }
+      });
+    });
+    document.querySelector('.records').addEventListener('click', async event => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      button.disabled = true;
+      try {
+        if (button.dataset.action === 'return') await post('/api/rentals/return', {rentalId: button.dataset.id});
+        if (button.dataset.action === 'complete') await post('/api/repairs/complete', {repairId: button.dataset.id});
+      } catch (error) { notify(error.message, true); }
+      finally { button.disabled = false; }
+    });
+    document.getElementById('refreshBtn').addEventListener('click', refresh);
+    refresh();
+  </script>
+</body>
+</html>
